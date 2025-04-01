@@ -4,3 +4,12 @@ node_modules
 README.md
 Dockerfile
 .dockerignore
+node_modules
+.vscode
+public/models/*
+3d.code-workspace
+.DS_Store
+jsconfig.json
+package-lock.json
+package.json
+README.md

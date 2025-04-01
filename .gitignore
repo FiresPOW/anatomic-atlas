@@ -2,9 +2,5 @@
 3d.code-workspace
 .vscode
 /public/models/*
-/scripts/*
-jsconfig.json
-package-lock.json
-package.json
 .DS_Store
-
+/public/models/*
