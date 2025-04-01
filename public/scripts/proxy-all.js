@@ -1,45 +1,56 @@
 (function() {
     console.log('[Proxy] Инициализация глобального прокси-перехватчика');
     
-    // Переопределяем XMLHttpRequest
+    // Сохраняем оригинальные методы
     const originalXHROpen = XMLHttpRequest.prototype.open;
-    XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
-        // Проверяем, является ли URL абсолютным (внешним)
-        if (typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://'))) {
-            // Не меняем оригинальный протокол в пути
+    const originalFetch = window.fetch;
+    const originalCreateElement = document.createElement;
+    const originalImageSrcSetter = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src').set;
+    
+    // Функция для проверки и модификации URL
+    function transformUrl(url) {
+        if (typeof url !== 'string') return url;
+        
+        // Проверка на абсолютный URL
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+            // Особая обработка для media.sketchfab.com
+            if (url.includes('media.sketchfab.com')) {
+                console.log('[Proxy] Media URL: ' + url + ' -> /direct-proxy/' + url);
+                return '/direct-proxy/' + url;
+            }
+            
+            // Особая обработка для статических ресурсов
+            if (url.includes('static.sketchfab.com')) {
+                console.log('[Proxy] Static URL: ' + url + ' -> /direct-proxy/' + url);
+                return '/direct-proxy/' + url;
+            }
+            
+            // Общая обработка
             const newUrl = '/proxy/' + url;
-            console.log('[Proxy] XHR: ' + url + ' -> ' + newUrl);
-            return originalXHROpen.call(this, method, newUrl, async, user, password);
+            console.log('[Proxy] URL: ' + url + ' -> ' + newUrl);
+            return newUrl;
         }
-        return originalXHROpen.call(this, method, url, async, user, password);
+        return url;
+    }
+    
+    // Переопределяем XMLHttpRequest
+    XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+        return originalXHROpen.call(this, method, transformUrl(url), async, user, password);
     };
     
     // Переопределяем fetch
-    const originalFetch = window.fetch;
     window.fetch = function(url, options) {
-        if (typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://'))) {
-            const newUrl = '/proxy/' + url;
-            console.log('[Proxy] Fetch: ' + url + ' -> ' + newUrl);
-            return originalFetch(newUrl, options);
-        }
-        return originalFetch(url, options);
+        return originalFetch(transformUrl(url), options);
     };
     
-    // Перехватываем тег script
-    const originalCreateElement = document.createElement;
+    // Перехватываем создание тегов <script>
     document.createElement = function(tagName) {
         const element = originalCreateElement.call(document, tagName);
         if (tagName.toLowerCase() === 'script') {
             const originalSetter = Object.getOwnPropertyDescriptor(element, 'src').set;
             Object.defineProperty(element, 'src', {
                 set: function(url) {
-                    if (typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://'))) {
-                        const newUrl = '/proxy/' + url;
-                        console.log('[Proxy] Script: ' + url + ' -> ' + newUrl);
-                        originalSetter.call(this, newUrl);
-                    } else {
-                        originalSetter.call(this, url);
-                    }
+                    originalSetter.call(this, transformUrl(url));
                 },
                 get: Object.getOwnPropertyDescriptor(element, 'src').get
             });
@@ -47,39 +58,12 @@
         return element;
     };
     
-    // Перехватываем загрузку изображений
-    const originalImage = window.Image;
-    window.Image = function() {
-        const image = new originalImage();
-        const originalSetter = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src').set;
-        Object.defineProperty(image, 'src', {
-            set: function(url) {
-                if (typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://'))) {
-                    const newUrl = '/proxy/' + url;
-                    console.log('[Proxy] Image: ' + url + ' -> ' + newUrl);
-                    originalSetter.call(this, newUrl);
-                } else {
-                    originalSetter.call(this, url);
-                }
-            },
-            get: Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src').get
-        });
-        return image;
-    };
-    
-    // Перехватываем iframe src
-    const originalIframeSrcSetter = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, 'src').set;
-    Object.defineProperty(HTMLIFrameElement.prototype, 'src', {
+    // Перехватываем установку атрибута src для изображений
+    Object.defineProperty(HTMLImageElement.prototype, 'src', {
         set: function(url) {
-            if (typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://'))) {
-                const newUrl = '/proxy/' + url;
-                console.log('[Proxy] Iframe: ' + url + ' -> ' + newUrl);
-                originalIframeSrcSetter.call(this, newUrl);
-            } else {
-                originalIframeSrcSetter.call(this, url);
-            }
+            originalImageSrcSetter.call(this, transformUrl(url));
         },
-        get: Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, 'src').get
+        get: Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src').get
     });
     
     console.log('[Proxy] Глобальный прокси-перехватчик успешно инициализирован');
