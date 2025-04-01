@@ -72,6 +72,23 @@
     </style>
 </head>
 <body>
+    <!-- Регистрация Service Worker для проксирования Sketchfab -->
+    <script>
+        if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/scripts/sketchfab-sw.js')
+            .then(function(registration) {
+                console.log('Service Worker зарегистрирован:', registration.scope);
+            })
+            .catch(function(error) {
+                console.error('Ошибка регистрации Service Worker:', error);
+            });
+        });
+        }
+    </script>
+
+
+
     <!-- Insert an empty iframe with attributes -->
     <iframe src="" id="api-frame" 
     allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true "></iframe>
