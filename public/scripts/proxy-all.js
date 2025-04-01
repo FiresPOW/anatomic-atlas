@@ -6,6 +6,7 @@
     XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
         // Проверяем, является ли URL абсолютным (внешним)
         if (typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://'))) {
+            // Не меняем оригинальный протокол в пути
             const newUrl = '/proxy/' + url;
             console.log('[Proxy] XHR: ' + url + ' -> ' + newUrl);
             return originalXHROpen.call(this, method, newUrl, async, user, password);
@@ -65,6 +66,21 @@
         });
         return image;
     };
+    
+    // Перехватываем iframe src
+    const originalIframeSrcSetter = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, 'src').set;
+    Object.defineProperty(HTMLIFrameElement.prototype, 'src', {
+        set: function(url) {
+            if (typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://'))) {
+                const newUrl = '/proxy/' + url;
+                console.log('[Proxy] Iframe: ' + url + ' -> ' + newUrl);
+                originalIframeSrcSetter.call(this, newUrl);
+            } else {
+                originalIframeSrcSetter.call(this, url);
+            }
+        },
+        get: Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, 'src').get
+    });
     
     console.log('[Proxy] Глобальный прокси-перехватчик успешно инициализирован');
 })();
