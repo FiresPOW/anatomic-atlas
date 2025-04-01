@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://kit.fontawesome.com/688ceb55f3.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Модель</title>
+    <style>
+        /* Сброс отступов и полей для всего документа */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Стили для html и body, чтобы они занимали весь доступный размер */
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Предотвращает появление полос прокрутки */
+        }
+
+        /* Стили для контейнера iframe */
+        .sketchfab-embed-wrapper {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Стили для самого iframe */
+        .sketchfab-embed-wrapper iframe {
+            width: 100% !important; /* !important убедится, что встроенные стили не перезапишут это */
+            height: 100% !important;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border: none; /* Убираем рамку */
+        }
+
+        /* Стили для кнопки возврата */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10; /* Убедитесь, что кнопка отображается поверх iframe */
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button:hover {
+            background-color: white;
+            transform: translateY(-2px);
+        }
+
+        .back-button i {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sketchfab-embed-wrapper">
+        <iframe
+            frameborder="0"
+            allowfullscreen
+            mozallowfullscreen="true"
+            webkitallowfullscreen="true"
+            allow="autoplay; fullscreen; xr-spatial-tracking"
+            xr-spatial-tracking
+            execution-while-out-of-viewport
+            execution-while-not-rendered
+            web-share
+            src="https://sketchfab.com/models/e1be1ce75d3b4770959d79881b640a6b/embed?autostart=1&ui_infos=0&ui_stop=0&ui_watermark_link=0&ui_watermark=0&ui_ar=0&ui_help=0&ui_vr=0&dnt=1">
+        </iframe>
+    </div>
+
+    <!-- Кнопка возврата размещена вне контейнера iframe для избежания конфликтов с z-index -->
+    <a href="/index.html" class="back-button"><i class="fa-solid fa-circle-left" style="color: #0066cc;"></i> Вернуться</a>
+</body>
+</html>
