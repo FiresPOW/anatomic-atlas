@@ -6,10 +6,22 @@
     const originalFetch = window.fetch;
     const originalCreateElement = document.createElement;
     const originalImageSrcSetter = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src').set;
+
+    // Список критических URL, которые нужно обрабатывать особым образом
+    const criticalUrls = [
+        'https://static.sketchfab.com/static/builds/web/dist/e0da9f93346f2476497a8e1bc087540c-v2.css',
+        'https://media.sketchfab.com/models/e1be1ce75d3b4770959d79881b640a6b/thumbnails/621ab501cdd2489199d35e111b71c60a/d4e8a570d2334c2cb6beddc6921fafbb.jpeg'
+    ];
     
     // Функция для проверки и модификации URL
     function transformUrl(url) {
         if (typeof url !== 'string') return url;
+        
+        // Если URL в списке критических, используем прямой прокси
+        if (criticalUrls.includes(url)) {
+            console.log('[Proxy] Критический URL: ' + url + ' -> /direct-proxy/' + url);
+            return '/direct-proxy/' + url;
+        }
         
         // Проверка на абсолютный URL
         if (url.startsWith('http://') || url.startsWith('https://')) {
@@ -43,28 +55,23 @@
         return originalFetch(transformUrl(url), options);
     };
     
-    // Перехватываем создание тегов <script>
-    document.createElement = function(tagName) {
-        const element = originalCreateElement.call(document, tagName);
-        if (tagName.toLowerCase() === 'script') {
-            const originalSetter = Object.getOwnPropertyDescriptor(element, 'src').set;
-            Object.defineProperty(element, 'src', {
-                set: function(url) {
-                    originalSetter.call(this, transformUrl(url));
-                },
-                get: Object.getOwnPropertyDescriptor(element, 'src').get
-            });
-        }
-        return element;
-    };
+    // Остальной код без изменений...
     
-    // Перехватываем установку атрибута src для изображений
-    Object.defineProperty(HTMLImageElement.prototype, 'src', {
-        set: function(url) {
-            originalImageSrcSetter.call(this, transformUrl(url));
-        },
-        get: Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src').get
-    });
+    // Добавляем отладочную функцию для тестирования
+    window.testProxy = function(url) {
+        console.log('Тестирование прокси для: ' + url);
+        fetch(url)
+            .then(response => {
+                console.log('Успешно! Статус: ' + response.status);
+                return response.text();
+            })
+            .then(text => {
+                console.log('Получено байт: ' + text.length);
+            })
+            .catch(error => {
+                console.error('Ошибка: ' + error);
+            });
+    };
     
     console.log('[Proxy] Глобальный прокси-перехватчик успешно инициализирован');
 })();
