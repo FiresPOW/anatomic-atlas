@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <script src="/scripts/proxy-all.js"></script>
     <meta charset="UTF-8">
     <!-- Используем прокси для загрузки скрипта Sketchfab Viewer API -->
     <script src="/scripts/sketchfab-viewer-1.12.1.js"></script>
@@ -72,20 +73,7 @@
     </style>
 </head>
 <body>
-    <!-- Регистрация Service Worker для проксирования Sketchfab -->
-    <script>
-        if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-            navigator.serviceWorker.register('/scripts/sketchfab-sw.js')
-            .then(function(registration) {
-                console.log('Service Worker зарегистрирован:', registration.scope);
-            })
-            .catch(function(error) {
-                console.error('Ошибка регистрации Service Worker:', error);
-            });
-        });
-        }
-    </script>
+
 
 
 
