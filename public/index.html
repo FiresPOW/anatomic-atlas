@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+        <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+    
+        ym(100742528, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/100742528" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Анатомический атлас 3D</title>
@@ -13,6 +29,9 @@
             padding: 0;
             background-color: #f5f5f5;
             color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         
         header {
@@ -37,6 +56,7 @@
             max-width: 1200px;
             margin: 2rem auto;
             padding: 0 1.5rem;
+            flex: 1;
         }
         
         .cards {
@@ -96,13 +116,13 @@
         .btn:hover {
             background-color: #0055aa;
         }
-        
         footer {
             background-color: #333;
             color: white;
             text-align: center;
             padding: 2rem 1rem;
-            margin-top: 3rem;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .footer-links {
@@ -150,7 +170,7 @@
                 <div class="card-content">
                     <h3 class="card-title">Скелет человека</h3>
                     <p class="card-description">Полная модель скелета взрослого человека с описанием.</p>
-                    <a href="viewer/skeleton/skeleton.html" class="btn">Открыть модель</a>
+                    <!-- <a href="#" class="btn">Открыть модель</a> -->
                 </div>
             </div>
             
@@ -159,7 +179,7 @@
                 <div class="card-content">
                     <h3 class="card-title">Позвоночник</h3>
                     <p class="card-description">Модель позвоночника с маркировкой позвонков.</p>
-                    <a href="viewer/spinal/spinal.html" class="btn">Открыть модель</a>
+                    <!-- <a href="#" class="btn">Открыть модель</a> -->
                 </div>
             </div>
             
@@ -169,8 +189,6 @@
                     <h3 class="card-title">Мышцы</h3>
                     <p class="card-description">Модель взрослого человека с мышцами.</p>
                     
-                    <a href="viewer/anatomic/anatomic.html" class="btn">Локальная</a>
-                    <!-- <a href="/viewer/anatomic_fab/anatomic.html" class="btn">Для телефона</a>   -->
                     <a href="viewer/anatomic_fab_api/anatomic.html" class="btn">Открыть модель</a>
                 </div>
             </div>
