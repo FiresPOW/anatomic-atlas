@@ -1,5 +1,4 @@
 /node_modules
 3d.code-workspace
 .vscode
-/public/models/*
 .DS_Store

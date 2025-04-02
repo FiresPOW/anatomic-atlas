@@ -6,7 +6,6 @@ Dockerfile
 .dockerignore
 node_modules
 .vscode
-public/models/*
 3d.code-workspace
 .DS_Store
 jsconfig.json
